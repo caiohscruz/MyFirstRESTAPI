@@ -56,13 +56,29 @@ app.get("/game/:id", (req, res) => {
         if (game != undefined) {
             res.statusCode = 200
             res.json(game)
-        }else{
+        } else {
             res.sendStatus(404)
         }
     }
 
 })
 // list  a specifyc game - end
+
+// create a game - begin
+app.post("/game", (req, res) => {
+
+    var {title, year, price} = req.body
+
+    DB.games.push({
+        id: 234,
+        title,
+        year,
+        price
+    })
+
+    res.sendStatus(200)
+})
+// create a game - end
 
 
 app.listen(45789, () => {
