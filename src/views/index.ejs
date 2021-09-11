@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My first REST API</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie-edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/styles.css">
+
+</head>
+<body>
+    <div class="content">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Verbs</th>
+                    <th>Path</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>/games</td>
+                    <td>Return all games</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/game/:id</td>
+                    <td>Return a specific game</td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>/game</td>
+                    <td>Create a new game</td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>/game/:id</td>
+                    <td>Update a specific game</td>
+                </tr>
+                <tr>
+                    <td>DELETE</td>
+                    <td>/game/:id</td>
+                    <td>Delete a specific game</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
