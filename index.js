@@ -8,6 +8,32 @@ app.use(express.urlencoded({
 }))
 // Settings to use forms - end
 
+var DB = {
+    games: {
+        {
+            id: 1,
+            title: GoW,
+            year: 2019,
+            price: 59
+        },
+        {
+            id: 2,
+            title: KoF,
+            year: 1997,
+            price: 30
+        },{
+            id: 3,
+            title: CoD,
+            year: 2020,
+            price: 70
+        },{
+            id: 4,
+            title: PoP,
+            year: 2014,
+            price: 40
+        }
+    }
+}
 
 
 app.listen(45789, () => {
