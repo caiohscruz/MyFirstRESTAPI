@@ -44,7 +44,25 @@ app.get("/games", (req, res) => {
 })
 // list all games - end
 
+// list a specifyc game - begin
+app.get("/game/:id", (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.sendStatus(400)
+    } else {
+        var id = parseInt(req.params.id)
 
+        var game = DB.games.find(g => g.id == id)
+
+        if (game != undefined) {
+            res.statusCode = 200
+            res.json(game)
+        }else{
+            res.sendStatus(404)
+        }
+    }
+
+})
+// list  a specifyc game - end
 
 
 app.listen(45789, () => {
