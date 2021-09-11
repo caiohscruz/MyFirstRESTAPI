@@ -102,6 +102,76 @@ app.delete("/game/:id", (req, res) => {
 })
 // delete a game - begin
 
+// update a game - begin
+app.put("/game/:id", (req, res) => {
+
+    if (isNaN(req.params.id)) {
+        res.sendStatus(400)
+    } else {
+        var id = parseInt(req.params.id)
+        var game = DB.games.find(g => g.id == id)
+
+        if (game == undefined) {
+            res.sendStatus(404)
+        } else {
+            var {
+                title,
+                year,
+                price
+            } = req.body
+
+            if (title != undefined) {
+                if (year != undefined) {
+                    if (!isNaN(year)) {
+                        if (price != undefined) {
+                            if (!isNaN(price)) {
+                                res.sendStatus(200)
+                                game.title = title
+                                game.year = year
+                                game.price = price
+                            } else {
+                                res.sendStatus(400)
+                            }
+                        } else {
+                            res.sendStatus(200)
+                            game.title = title
+                            game.year = year
+                        }
+                    } else {
+                        res.sendStatus(400)
+                    }
+                } else {
+                    res.sendStatus(200)
+                    game.title = title
+                }
+            } else {
+                if (year != undefined) {
+                    if (!isNaN(year)) {
+                        if (price != undefined) {
+                            if (!isNaN(price)) {
+                                res.sendStatus(200)
+                                game.year = year
+                                game.price = price
+                            } else {
+                                res.sendStatus(400)
+                            }
+                        } else {
+                            res.sendStatus(200)
+                            game.year = year
+                        }
+                    } else {
+                        res.sendStatus(400)
+                    }
+                } else {
+                    res.sendStatus(400)
+                }
+            }
+
+        }
+    }
+})
+// update a game - begin
+
 app.listen(45789, () => {
     console.log("API RODANDO")
 })
