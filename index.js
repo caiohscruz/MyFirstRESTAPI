@@ -1,11 +1,16 @@
 const express = require("express")
 const app = express()
 
+// setting cors to consume from this api
+const cors = require("cors")
+app.use(cors)
+
 // Settings to use forms - begin
 app.use(express.json())
 app.use(express.urlencoded({
     extended: false
 }))
+
 // Settings to use forms - end
 
 var DB = {
