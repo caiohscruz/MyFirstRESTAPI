@@ -79,7 +79,6 @@ app.post("/game", (req, res) => {
     } = req.body
 
     DB.games.push({
-        id: 234,
         title,
         year,
         price
