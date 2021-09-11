@@ -3,7 +3,7 @@ const app = express()
 
 // setting cors to consume from this api
 const cors = require("cors")
-app.use(cors)
+app.use(cors())
 
 // Settings to use forms - begin
 app.use(express.json())
