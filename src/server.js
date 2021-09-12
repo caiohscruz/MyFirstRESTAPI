@@ -20,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'))
 
 const connection = require("./database/database")
 const games = require("./database/games")
+const users = require("./database/users")
 
 // Conecction test - begin
 connection
@@ -244,6 +245,83 @@ app.put("/game/:id", async (req, res) => {
     }
 })
 // update a game - begin
+
+// route to authentication - begin
+app.post("/auth", (req, res) => {
+    var {
+        email,
+        password
+    } = req.body
+    if (email != undefined) {
+        users.findOne({
+            where: {
+                email: email
+            }
+        }).then(user => {
+            if (user != undefined) {
+                if (user.password == password) {
+                    res.status(200)
+                    res.json({token: "TOKEN"})
+                } else {
+                    res.status(400)
+                    res.json({
+                        err: "Combinação de email e senha inválida"
+                    })
+                }
+            } else {
+                res.status(404)
+                res.json({
+                    err: "Usuário não encontrado"
+                })
+            }
+        })
+    } else {
+        res.status(400)
+        res.json({
+            err: "E-mail inválido"
+        })
+    }
+})
+// route to authentication - end
+
+// route to signup - begin
+app.post("/signup", (req, res) => {
+    var {
+        email,
+        password,
+        username
+    } = req.body
+    if ((email != undefined)&&(username != undefined)&&(password != undefined)) {
+        users.create({
+            email: email,
+            password: password,
+            username: username
+        }).then(user => {
+            if (user != undefined) {
+                if (user.password == password) {
+                    res.status(200)
+                    res.json({token: "TOKEN"})
+                } else {
+                    res.status(400)
+                    res.json({
+                        err: "Combinação de email e senha inválida"
+                    })
+                }
+            } else {
+                res.status(404)
+                res.json({
+                    err: "Usuário não encontrado"
+                })
+            }
+        })
+    } else {
+        res.status(400)
+        res.json({
+            err: "E-mail inválido"
+        })
+    }
+})
+// route to signup - end
 
 app.listen(process.env.PORT || 45789, () => {
     console.log("API RODANDO")
