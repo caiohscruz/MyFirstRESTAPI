@@ -60,7 +60,7 @@ app.get("/games", auth, async (req, res) => {
 // list all games - end
 
 // list a specifyc game - begin
-app.get("/game/:id", async (req, res) => {
+app.get("/game/:id", auth, async (req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     } else {
@@ -84,7 +84,7 @@ app.get("/game/:id", async (req, res) => {
 // list  a specifyc game - end
 
 // create a game - begin
-app.post("/game", (req, res) => {
+app.post("/game", auth, (req, res) => {
 
     var {
         title,
@@ -107,7 +107,7 @@ app.post("/game", (req, res) => {
 // create a game - end
 
 // delete a game - begin
-app.delete("/game/:id", async (req, res) => {
+app.delete("/game/:id", auth, async (req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     } else {
@@ -136,7 +136,7 @@ app.delete("/game/:id", async (req, res) => {
 // delete a game - begin
 
 // update a game - begin
-app.put("/game/:id", async (req, res) => {
+app.put("/game/:id", auth, async (req, res) => {
 
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
