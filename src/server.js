@@ -10,6 +10,9 @@ app.use(cors())
 const jwt = require("jsonwebtoken")
 const jwtSecret = process.env.JWTSECRET
 
+// middleware
+const auth = require("./middleware/auth")
+
 // Settings to use forms - begin
 app.use(express.json())
 app.use(express.urlencoded({
@@ -42,7 +45,7 @@ app.get("/", (req, res) => {
 })
 
 // list all games - begin
-app.get("/games", async (req, res) => {
+app.get("/games", auth, async (req, res) => {
     await games.findAll({
         raw: true
     }).then(result => {
