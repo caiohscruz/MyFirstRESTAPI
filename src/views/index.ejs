@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>My first REST API</title>
+    <title>1st REST API w/ Auth</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +22,16 @@
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td>POST</td>
+                    <td>/signup</td>
+                    <td>Send username, email and password to create a user</td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>/auth</td>
+                    <td>Send email and password to authenticate a user</td>
+                </tr>
                 <tr>
                     <td>GET</td>
                     <td>/games</td>
@@ -46,6 +56,36 @@
                     <td>DELETE</td>
                     <td>/game/:id</td>
                     <td>Delete a specific game</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th colspan="3">Users format</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>number</td>
+                </tr>
+                <tr>
+                    <td>username</td>
+                    <td>string</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>string</td>
+                </tr>
+                <tr>
+                    <td>password</td>
+                    <td>string</td>
                 </tr>
             </tbody>
         </table>
