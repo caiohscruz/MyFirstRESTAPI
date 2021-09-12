@@ -84,13 +84,17 @@ app.post("/game", (req, res) => {
         price
     } = req.body
 
-    games.create({
-        title: title,
-        year: year,
-        price: price
-    }).then(() => {
-        res.sendStatus(200)
-    })
+    if ((title != undefined) && (year != undefined) && (!isNaN(year)) && (price != undefined) && (!isNaN(price))) {
+        games.create({
+            title: title,
+            year: year,
+            price: price
+        }).then(() => {
+            res.sendStatus(200)
+        })
+    } else {
+        res.sendStatus(400)
+    }
 })
 // create a game - end
 
@@ -144,17 +148,95 @@ app.put("/game/:id", async (req, res) => {
                     price
                 } = req.body
 
-                await games.update({
-                    title: title,
-                    year: year,
-                    price: price
-                }, {
-                    where: {
-                        id: id
-                    }
-                }).then(() => {
-                    res.sendStatus(200)
-                })
+                if ((title != undefined) && (year != undefined) && (!isNaN(year)) && (price != undefined) && (!isNaN(price))) {
+                    // title year price
+                    await games.update({
+                        title: title,
+                        year: year,
+                        price: price
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+                } else if ((title != undefined) && (year != undefined) && (!isNaN(year)) && (price == undefined)) {
+                    // title year
+                    await games.update({
+                        title: title,
+                        year: year
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+
+                } else if ((title != undefined) && (year == undefined) && (price != undefined) && (!isNaN(price))) {
+                    // title price
+                    await games.update({
+                        title: title,
+                        price: price
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+
+                } else if ((title == undefined) && (year != undefined) && (!isNaN(year)) && (price != undefined) && (!isNaN(price))) {
+                    // year price
+                    await games.update({
+                        year: year,
+                        price: price
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+                } else if ((title != undefined) && (year == undefined) && (price == undefined)) {
+                    // title
+                    await games.update({
+                        title: title
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+
+                } else if ((title == undefined) && (year != undefined) && (!isNaN(year)) && (price == undefined)) {
+                    // year
+                    await games.update({
+                        year: year
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+
+                } else if ((title == undefined) && (year == undefined) && (price != undefined) && (!isNaN(price))) {
+                    // price
+                    await games.update({
+                        price: price
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+                } else {
+                    res.sendStatus(400)
+                }
             } else {
                 res.sendStatus(404)
             }
