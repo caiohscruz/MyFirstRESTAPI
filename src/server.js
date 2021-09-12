@@ -315,13 +315,27 @@ app.post("/signup", (req, res) => {
         username
     } = req.body
     if ((email != undefined) && (username != undefined) && (password != undefined)) {
-        users.create({
-            email: email,
-            password: password,
-            username: username
-        }).then(() => {
-            res.sendStatus(200)
+        users.findOne({
+            where: {
+                email: email
+            }
+        }).then(user => {
+            if (user == undefined) {
+                users.create({
+                    email: email,
+                    password: password,
+                    username: username
+                }).then(() => {
+                    res.sendStatus(200)
+                })
+            } else {
+                res.status(400)
+                res.json({
+                    err: "Usuário já cadastrado"
+                })
+            }
         })
+
     } else {
         res.status(400)
         res.json({
