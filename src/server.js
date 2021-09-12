@@ -6,6 +6,10 @@ const path = require('path')
 const cors = require("cors")
 app.use(cors())
 
+// token
+const jwt = require("jsonwebtoken")
+const jwtSecret = process.env.JWTSECRET
+
 // Settings to use forms - begin
 app.use(express.json())
 app.use(express.urlencoded({
@@ -260,8 +264,24 @@ app.post("/auth", (req, res) => {
         }).then(user => {
             if (user != undefined) {
                 if (user.password == password) {
-                    res.status(200)
-                    res.json({token: "TOKEN"})
+                    jwt.sign({
+                        id: user.id,
+                        username: user.username
+                    }, jwtSecret, {
+                        expiresIn: "48h"
+                    }, (err, token) => {
+                        if (err) {
+                            res.status(400)
+                            res.json({
+                                err: "Falha interna"
+                            })
+                        } else {
+                            res.status(200)
+                            res.json({
+                                token: token
+                            })
+                        }
+                    })
                 } else {
                     res.status(400)
                     res.json({
@@ -291,33 +311,18 @@ app.post("/signup", (req, res) => {
         password,
         username
     } = req.body
-    if ((email != undefined)&&(username != undefined)&&(password != undefined)) {
+    if ((email != undefined) && (username != undefined) && (password != undefined)) {
         users.create({
             email: email,
             password: password,
             username: username
-        }).then(user => {
-            if (user != undefined) {
-                if (user.password == password) {
-                    res.status(200)
-                    res.json({token: "TOKEN"})
-                } else {
-                    res.status(400)
-                    res.json({
-                        err: "Combinação de email e senha inválida"
-                    })
-                }
-            } else {
-                res.status(404)
-                res.json({
-                    err: "Usuário não encontrado"
-                })
-            }
+        }).then(() => {
+            res.sendStatus(200)
         })
     } else {
         res.status(400)
         res.json({
-            err: "E-mail inválido"
+            err: "Credenciais inválidas"
         })
     }
 })
