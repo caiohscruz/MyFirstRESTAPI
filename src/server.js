@@ -131,43 +131,38 @@ app.put("/game/:id", async (req, res) => {
     } else {
         var id = parseInt(req.params.id)
 
+        await games.findOne({
+            raw: true,
+            where: {
+                id: id
+            }
+        }).then(async result => {
+            if (result != undefined) {
+                var {
+                    title,
+                    year,
+                    price
+                } = req.body
 
-        if (game == undefined) {
-            res.sendStatus(404)
-        } else {
-            var {
-                title,
-                year,
-                price
-            } = req.body
-
-            await games.findOne({
-                raw: true,
-                where: {
-                    id: id
-                }
-            }).then(async result => {
-                if (result != undefined) {
-                    await games.update({
-                        title: title,
-                        year: year,
-                        price: price
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-                } else {
-                    res.sendStatus(404)
-                }
-            })
-        }
+                await games.update({
+                    title: title,
+                    year: year,
+                    price: price
+                }, {
+                    where: {
+                        id: id
+                    }
+                }).then(() => {
+                    res.sendStatus(200)
+                })
+            } else {
+                res.sendStatus(404)
+            }
+        })
     }
 })
 // update a game - begin
 
-app.listen(process.env.PORT ||45789, () => {
+app.listen(process.env.PORT || 45789, () => {
     console.log("API RODANDO")
 })
