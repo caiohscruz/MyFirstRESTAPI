@@ -126,7 +126,7 @@ app.delete("/course/:id", auth, async (req, res) => {
                     where: {
                         CourseId: id
                     }
-                }).then(() => {
+                }).then(async () => {
                     await Course.destroy({
                         where: {
                             id: id

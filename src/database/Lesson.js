@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize")
 const connection = require("./database")
-const Course = require("./database/Course")
+const Course = require("./Course")
 
 /* Cria a estrutura da tabela. STRING < TEXT */
 const Lesson = connection.define("Lessons", {
@@ -23,7 +23,7 @@ Course.hasMany(Lesson)
 // Estabelecendo relacionamento 1-1
 Lesson.belongsTo(Course)
 // inicializa tabelas caso não existam
-User.sync({
+Lesson.sync({
     force: false
 })
 
