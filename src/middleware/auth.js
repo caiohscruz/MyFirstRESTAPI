@@ -3,6 +3,8 @@ function auth(req, res, next) {
     const jwt = require("jsonwebtoken")
     const jwtSecret = process.env.JWTSECRET
 
+    /* autenticação fica de lado por enquanto 
+
     const authToken = req.headers["authorization"]
 
     if (authToken != undefined) {
@@ -28,6 +30,9 @@ function auth(req, res, next) {
         })
     }
 
+    */
+
+    next();
 }
 
 module.exports = auth

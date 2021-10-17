@@ -26,8 +26,8 @@ app.set('views', path.join(__dirname, 'views'))
 // Setting View Engine - end
 
 const connection = require("./database/database")
-const games = require("./database/games")
-const users = require("./database/users")
+const Course = require("./database/Course")
+const Lesson = require("./database/Lesson")
 
 // Conecction test - begin
 connection
@@ -44,9 +44,9 @@ app.get("/", (req, res) => {
     res.render("index.ejs")
 })
 
-// list all games - begin
-app.get("/games", auth, async (req, res) => {
-    await games.findAll({
+// list all courses - begin
+app.get("/courses", async (req, res) => {
+    await Course.findAll({
         raw: true
     }).then(result => {
         if (result != undefined) {
@@ -57,19 +57,19 @@ app.get("/games", auth, async (req, res) => {
         }
     })
 })
-// list all games - end
+// list all courses - end
 
-// list a specifyc game - begin
-app.get("/game/:id", auth, async (req, res) => {
+// list all lessons from a specific course - begin
+app.get("/lessons/:id", async (req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     } else {
         var id = parseInt(req.params.id)
 
-        await games.findOne({
+        await Lesson.findAll({
             raw: true,
             where: {
-                id: id
+                courseId: id
             }
         }).then(result => {
             if (result != undefined) {
@@ -81,22 +81,24 @@ app.get("/game/:id", auth, async (req, res) => {
         })
     }
 })
-// list  a specifyc game - end
+// list all lessons from a specific course - end
 
-// create a game - begin
-app.post("/game", auth, (req, res) => {
+// create a course - begin
+app.post("/course", auth, (req, res) => {
 
     var {
         title,
-        year,
-        price
+        cover,
+        teacher,
+        description
     } = req.body
 
-    if ((title != undefined) && (year != undefined) && (!isNaN(year)) && (price != undefined) && (!isNaN(price))) {
-        games.create({
+    if ((title != undefined) && (cover != undefined) && (teacher != undefined) && (description != undefined)) {
+        Course.create({
             title: title,
-            year: year,
-            price: price
+            cover: cover,
+            teacher: teacher,
+            description: description
         }).then(() => {
             res.sendStatus(200)
         })
@@ -104,23 +106,128 @@ app.post("/game", auth, (req, res) => {
         res.sendStatus(400)
     }
 })
-// create a game - end
+// create a course - end
 
-// delete a game - begin
-app.delete("/game/:id", auth, async (req, res) => {
+// delete a course and its lessons - begin
+app.delete("/course/:id", auth, async (req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     } else {
         var id = parseInt(req.params.id)
 
-        await games.findOne({
+        await Course.findOne({
             raw: true,
             where: {
                 id: id
             }
         }).then(async result => {
             if (result != undefined) {
-                await games.destroy({
+                await Lesson.destroy({
+                    where: {
+                        CourseId: id
+                    }
+                }).then(() => {
+                    await Course.destroy({
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+                })
+            } else {
+                res.sendStatus(404)
+            }
+        })
+    }
+})
+// delete a course and its lessons - begin
+
+// update a course - begin
+app.put("/course/:id", auth, async (req, res) => {
+
+    if (isNaN(req.params.id)) {
+        res.sendStatus(400)
+    } else {
+        var id = parseInt(req.params.id)
+
+        await Course.findOne({
+            raw: true,
+            where: {
+                id: id
+            }
+        }).then(async result => {
+            if (result != undefined) {
+                var {
+                    title,
+                    cover,
+                    teacher,
+                    description
+                } = req.body
+
+                if ((title != undefined) && (cover != undefined) && (teacher != undefined) && (description != undefined)) {
+                    // title year price
+                    await Course.update({
+                        title: title,
+                        cover: cover,
+                        teacher: teacher,
+                        description: description
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    }).then(() => {
+                        res.sendStatus(200)
+                    })
+                } else {
+                    res.sendStatus(404)
+                }
+            } else {
+                res.sendStatus(404)
+            }
+        })
+    }
+})
+// update a course - begin
+
+// create a lesson - begin
+app.post("/lesson", auth, (req, res) => {
+
+    var {
+        title,
+        link,
+        description
+    } = req.body
+
+    if ((title != undefined) && (link != undefined) && (description != undefined)) {
+        Lesson.create({
+            title: title,
+            link: link,
+            description: description
+        }).then(() => {
+            res.sendStatus(200)
+        })
+    } else {
+        res.sendStatus(400)
+    }
+})
+// create a lesson - end
+
+// delete a lesson - begin
+app.delete("/lesson/:id", auth, async (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.sendStatus(400)
+    } else {
+        var id = parseInt(req.params.id)
+
+        await Lesson.findOne({
+            raw: true,
+            where: {
+                id: id
+            }
+        }).then(async result => {
+            if (result != undefined) {
+                await Lesson.destroy({
                     where: {
                         id: id
                     }
@@ -133,17 +240,17 @@ app.delete("/game/:id", auth, async (req, res) => {
         })
     }
 })
-// delete a game - begin
+// delete a lesson - begin
 
-// update a game - begin
-app.put("/game/:id", auth, async (req, res) => {
+// update a lesson - begin
+app.put("/lesson/:id", auth, async (req, res) => {
 
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     } else {
         var id = parseInt(req.params.id)
 
-        await games.findOne({
+        await Lesson.findOne({
             raw: true,
             where: {
                 id: id
@@ -152,89 +259,16 @@ app.put("/game/:id", auth, async (req, res) => {
             if (result != undefined) {
                 var {
                     title,
-                    year,
-                    price
+                    link,
+                    description
                 } = req.body
 
-                if ((title != undefined) && (year != undefined) && (!isNaN(year)) && (price != undefined) && (!isNaN(price))) {
+                if ((title != undefined) && (link != undefined) && (description != undefined)) {
                     // title year price
                     await games.update({
                         title: title,
-                        year: year,
-                        price: price
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-                } else if ((title != undefined) && (year != undefined) && (!isNaN(year)) && (price == undefined)) {
-                    // title year
-                    await games.update({
-                        title: title,
-                        year: year
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-
-                } else if ((title != undefined) && (year == undefined) && (price != undefined) && (!isNaN(price))) {
-                    // title price
-                    await games.update({
-                        title: title,
-                        price: price
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-
-                } else if ((title == undefined) && (year != undefined) && (!isNaN(year)) && (price != undefined) && (!isNaN(price))) {
-                    // year price
-                    await games.update({
-                        year: year,
-                        price: price
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-                } else if ((title != undefined) && (year == undefined) && (price == undefined)) {
-                    // title
-                    await games.update({
-                        title: title
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-
-                } else if ((title == undefined) && (year != undefined) && (!isNaN(year)) && (price == undefined)) {
-                    // year
-                    await games.update({
-                        year: year
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-
-                } else if ((title == undefined) && (year == undefined) && (price != undefined) && (!isNaN(price))) {
-                    // price
-                    await games.update({
-                        price: price
+                        link: link,
+                        description: description
                     }, {
                         where: {
                             id: id
@@ -243,7 +277,7 @@ app.put("/game/:id", auth, async (req, res) => {
                         res.sendStatus(200)
                     })
                 } else {
-                    res.sendStatus(400)
+                    res.sendStatus(404)
                 }
             } else {
                 res.sendStatus(404)
@@ -251,7 +285,7 @@ app.put("/game/:id", auth, async (req, res) => {
         })
     }
 })
-// update a game - begin
+// update a lesson - begin
 
 // route to authentication - begin
 app.post("/auth", (req, res) => {

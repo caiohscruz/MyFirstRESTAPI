@@ -2,24 +2,28 @@ const Sequelize = require("sequelize")
 const connection = require("./database")
 
 /* Cria a estrutura da tabela. STRING < TEXT */
-const Game = connection.define("games", {
+const Course = connection.define("Courses", {
     title: {
         type: Sequelize.STRING,
         allownull: false
     },
-    year: {
+    cover: {
         type: Sequelize.STRING,
         allownull: false
     },
-    price: {
+    teacher: {
         type: Sequelize.STRING,
+        allownull: false
+    },
+    description: {
+        type: Sequelize.TEXT,
         allownull: false
     }
 })
 
 // inicializa tabelas caso não existam
-Game.sync({
+Course.sync({
     force: false
 })
 
-module.exports = Game
+module.exports = Course

@@ -6,20 +6,6 @@ O desafio do processo da Anima TECH solicitou, dentre outras coisas, o desenvolv
 
 ## :satellite: Como usar?
 
-Esta API está funcionando no endereço: xxxxxxxxxxxxxxxx
+Esta API está funcionando no endereço: https://demo-api-anima-project.herokuapp.com/
 
 
-## :rocket:Tecnologias
-
-Esse projeto foi desenvolvido com as seguintes tecnologias:
-
-- JavaScript
-- NodeJS
-- EJS
-- Axios
-- JWT
-- Cors
-- dotenv
-- Sequelize
-- Mysql2
-- Express
