@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>1st REST API w/ Auth</title>
+    <title>DemoAPI AnimaProject</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,46 +15,73 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
+                    <th>Function</th>
                     <th>Verbs</th>
                     <th>Path</th>
-                    <th>Function</th>
+                    <th>json attributes</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
+                    <td>create a user</td>
                     <td>POST</td>
                     <td>/signup</td>
-                    <td>Send username, email and password to create a user</td>
+                    <td>Send username, email and password</td>
                 </tr>
                 <tr>
+                    <td>authenticate a user</td>
                     <td>POST</td>
                     <td>/auth</td>
-                    <td>Send email and password to authenticate a user</td>
+                    <td>Send email and password</td>
                 </tr>
                 <tr>
+                    <td>Return all courses</td>
                     <td>GET</td>
-                    <td>/games</td>
-                    <td>Return all games</td>
+                    <td>/courses</td>
+                    <td>Courses has id, title, cover, teacher and description</td>
                 </tr>
                 <tr>
+                    <td>Return all lesson from a specific course</td>
                     <td>GET</td>
-                    <td>/game/:id</td>
-                    <td>Return a specific game</td>
+                    <td>/lessons/:id</td>
+                    <td>Send id (the course id) and receive id, title, link, courseId and description</td>
                 </tr>
                 <tr>
+                    <td>Create a new course</td>
                     <td>POST</td>
-                    <td>/game</td>
-                    <td>Create a new game</td>
+                    <td>/course</td>
+                    <td>Send title, cover, teacher and description</td>
                 </tr>
                 <tr>
+                    <td>Create a new lesson</td>
+                    <td>POST</td>
+                    <td>/lesson</td>
+                    <td>Send title, link, CourseId and description</td>
+
+                </tr>
+                <tr>
+                    <td>Update a specific course</td>
                     <td>PUT</td>
-                    <td>/game/:id</td>
-                    <td>Update a specific game</td>
+                    <td>/course/:id</td>
+                    <td>send title, cover, teacher and description</td>
+                </tr>
+                <tr>
+                    <td>Update a specific lesson</td>
+                    <td>PUT</td>
+                    <td>/lesson/:id</td>
+                    <td>send title, link, CourseId and description</td>
                 </tr>
                 <tr>
                     <td>DELETE</td>
-                    <td>/game/:id</td>
-                    <td>Delete a specific game</td>
+                    <td>/course/:id</td>
+                    <td>Delete a specific course</td>
+                    <td>NA</td>
+                </tr>
+                <tr>
+                    <td>DELETE</td>
+                    <td>/lesson/:id</td>
+                    <td>Delete a specific lesson</td>
+                    <td>NA</td>
                 </tr>
             </tbody>
         </table>
@@ -75,15 +102,7 @@
                     <td>number</td>
                 </tr>
                 <tr>
-                    <td>username</td>
-                    <td>string</td>
-                </tr>
-                <tr>
-                    <td>email</td>
-                    <td>string</td>
-                </tr>
-                <tr>
-                    <td>password</td>
+                    <td>email, password, title, description, cover, link, teacher</td>
                     <td>string</td>
                 </tr>
             </tbody>

@@ -196,14 +196,16 @@ app.post("/lesson", auth, (req, res) => {
     var {
         title,
         link,
-        description
+        description,
+        CourseId
     } = req.body
 
-    if ((title != undefined) && (link != undefined) && (description != undefined)) {
+    if ((title != undefined) && (link != undefined) && (description != undefined) && (courseId != undefined)) {
         Lesson.create({
             title: title,
             link: link,
-            description: description
+            description: description,
+            CourseId:CourseId
         }).then(() => {
             res.sendStatus(200)
         })
@@ -260,10 +262,11 @@ app.put("/lesson/:id", auth, async (req, res) => {
                 var {
                     title,
                     link,
-                    description
+                    description,
+                    CourseId
                 } = req.body
 
-                if ((title != undefined) && (link != undefined) && (description != undefined)) {
+                if ((title != undefined) && (link != undefined) && (description != undefined)&& (CourseId != undefined)) {
                     // title year price
                     await games.update({
                         title: title,
