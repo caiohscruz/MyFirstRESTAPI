@@ -289,7 +289,7 @@ app.put("/lesson/:id", auth, async (req, res) => {
     }
 })
 // update a lesson - begin
-
+/*
 // route to authentication - begin
 app.post("/auth", (req, res) => {
     var {
@@ -381,7 +381,7 @@ app.post("/signup", (req, res) => {
     }
 })
 // route to signup - end
-
+*/
 app.listen(process.env.PORT || 45789, () => {
     console.log("API RODANDO")
 })
