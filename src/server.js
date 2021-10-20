@@ -218,19 +218,19 @@ app.put("/course/:id", auth, async (req, res) => {
 
 // create a lesson - begin
 app.post("/lesson", auth, (req, res) => {
-  var { title, link, description, CourseId } = req.body;
+  var { title, link, description, courseid } = req.body;
 
   if (
     title != undefined &&
     link != undefined &&
     description != undefined &&
-    courseId != undefined
+    courseid != undefined
   ) {
     Lesson.create({
       title: title,
       link: link,
       description: description,
-      CourseId: CourseId,
+      CourseId: courseid,
     }).then(() => {
       res.sendStatus(200);
     });
