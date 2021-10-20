@@ -1,311 +1,322 @@
-const express = require("express")
-const app = express()
-const path = require('path')
+const express = require("express");
+const app = express();
+const path = require("path");
 
 // setting cors to consume from this api
-const cors = require("cors")
-app.use(cors())
+const cors = require("cors");
+app.use(cors());
 
 // token
-const jwt = require("jsonwebtoken")
-const jwtSecret = process.env.JWTSECRET
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWTSECRET;
 
 // middleware
-const auth = require("./middleware/auth")
+const auth = require("./middleware/auth");
 
 // Settings to use forms - begin
-app.use(express.json())
-app.use(express.urlencoded({
-    extended: false
-}))
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: false,
+  })
+);
 // Settings to use forms - end
 
 // Setting View Engine - begin
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'))
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 // Setting View Engine - end
 
-const connection = require("./database/database")
-const Course = require("./database/Course")
-const Lesson = require("./database/Lesson")
+const connection = require("./database/database");
+const Course = require("./database/Course");
+const Lesson = require("./database/Lesson");
 
 // Conecction test - begin
 connection
-    .authenticate()
-    .then(() => {
-        console.log("Conexão feita com o banco de dados")
-    })
-    .catch((msgErro) => {
-        console.log(msgErro)
-    })
+  .authenticate()
+  .then(() => {
+    console.log("Conexão feita com o banco de dados");
+  })
+  .catch((msgErro) => {
+    console.log(msgErro);
+  });
 // Conecction test - end
 
 app.get("/", (req, res) => {
-    res.render("index.ejs")
-})
+  res.render("index.ejs");
+});
 
 // list all courses - begin
 app.get("/courses", async (req, res) => {
-    await Course.findAll({
-        raw: true
-    }).then(result => {
-        if (result != undefined) {
-            res.statusCode = 200
-            res.json(result)
-        } else {
-            res.sendStatus(404)
-        }
-    })
-})
+  await Course.findAll({
+    raw: true,
+  }).then((result) => {
+    if (result != undefined) {
+      res.statusCode = 200;
+      res.json(result);
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 // list all courses - end
 
 // list a specific courses - begin
 app.get("/course/:id", async (req, res) => {
+  if (isNaN(req.params.id)) {
+    res.sendStatus(400);
+  } else {
+    var id = parseInt(req.params.id);
     await Course.findOne({
-        raw: true,
-        where:{
-            id: id
-        }
-    }).then(result => {
-        if (result != undefined) {
-            res.statusCode = 200
-            res.json(result)
-        } else {
-            res.sendStatus(404)
-        }
-    })
-})
+      raw: true,
+      where: {
+        id: id,
+      },
+    }).then((result) => {
+      if (result != undefined) {
+        res.statusCode = 200;
+        res.json(result);
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  }
+});
 // list a specific course - end
 
 // list all lessons from a specific course - begin
 app.get("/lessons/:id", async (req, res) => {
-    if (isNaN(req.params.id)) {
-        res.sendStatus(400)
-    } else {
-        var id = parseInt(req.params.id)
+  if (isNaN(req.params.id)) {
+    res.sendStatus(400);
+  } else {
+    var id = parseInt(req.params.id);
 
-        await Lesson.findAll({
-            raw: true,
-            where: {
-                courseId: id
-            }
-        }).then(result => {
-            if (result != undefined) {
-                res.statusCode = 200
-                res.json(result)
-            } else {
-                res.sendStatus(404)
-            }
-        })
-    }
-})
+    await Lesson.findAll({
+      raw: true,
+      where: {
+        courseId: id,
+      },
+    }).then((result) => {
+      if (result != undefined) {
+        res.statusCode = 200;
+        res.json(result);
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  }
+});
 // list all lessons from a specific course - end
 
 // create a course - begin
 app.post("/course", auth, (req, res) => {
+  var { title, cover, teacher, description } = req.body;
 
-    var {
-        title,
-        cover,
-        teacher,
-        description
-    } = req.body
-
-    if ((title != undefined) && (cover != undefined) && (teacher != undefined) && (description != undefined)) {
-        Course.create({
-            title: title,
-            cover: cover,
-            teacher: teacher,
-            description: description
-        }).then(() => {
-            res.sendStatus(200)
-        })
-    } else {
-        res.sendStatus(400)
-    }
-})
+  if (
+    title != undefined &&
+    cover != undefined &&
+    teacher != undefined &&
+    description != undefined
+  ) {
+    Course.create({
+      title: title,
+      cover: cover,
+      teacher: teacher,
+      description: description,
+    }).then(() => {
+      res.sendStatus(200);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
 // create a course - end
 
 // delete a course and its lessons - begin
 app.delete("/course/:id", auth, async (req, res) => {
-    if (isNaN(req.params.id)) {
-        res.sendStatus(400)
-    } else {
-        var id = parseInt(req.params.id)
+  if (isNaN(req.params.id)) {
+    res.sendStatus(400);
+  } else {
+    var id = parseInt(req.params.id);
 
-        await Course.findOne({
-            raw: true,
+    await Course.findOne({
+      raw: true,
+      where: {
+        id: id,
+      },
+    }).then(async (result) => {
+      if (result != undefined) {
+        await Lesson.destroy({
+          where: {
+            CourseId: id,
+          },
+        }).then(async () => {
+          await Course.destroy({
             where: {
-                id: id
-            }
-        }).then(async result => {
-            if (result != undefined) {
-                await Lesson.destroy({
-                    where: {
-                        CourseId: id
-                    }
-                }).then(async () => {
-                    await Course.destroy({
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-                })
-            } else {
-                res.sendStatus(404)
-            }
-        })
-    }
-})
+              id: id,
+            },
+          }).then(() => {
+            res.sendStatus(200);
+          });
+        });
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  }
+});
 // delete a course and its lessons - begin
 
 // update a course - begin
 app.put("/course/:id", auth, async (req, res) => {
+  if (isNaN(req.params.id)) {
+    res.sendStatus(400);
+  } else {
+    var id = parseInt(req.params.id);
 
-    if (isNaN(req.params.id)) {
-        res.sendStatus(400)
-    } else {
-        var id = parseInt(req.params.id)
+    await Course.findOne({
+      raw: true,
+      where: {
+        id: id,
+      },
+    }).then(async (result) => {
+      if (result != undefined) {
+        var { title, cover, teacher, description } = req.body;
 
-        await Course.findOne({
-            raw: true,
-            where: {
-                id: id
+        if (
+          title != undefined &&
+          cover != undefined &&
+          teacher != undefined &&
+          description != undefined
+        ) {
+          // title year price
+          await Course.update(
+            {
+              title: title,
+              cover: cover,
+              teacher: teacher,
+              description: description,
+            },
+            {
+              where: {
+                id: id,
+              },
             }
-        }).then(async result => {
-            if (result != undefined) {
-                var {
-                    title,
-                    cover,
-                    teacher,
-                    description
-                } = req.body
-
-                if ((title != undefined) && (cover != undefined) && (teacher != undefined) && (description != undefined)) {
-                    // title year price
-                    await Course.update({
-                        title: title,
-                        cover: cover,
-                        teacher: teacher,
-                        description: description
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-                } else {
-                    res.sendStatus(404)
-                }
-            } else {
-                res.sendStatus(404)
-            }
-        })
-    }
-})
+          ).then(() => {
+            res.sendStatus(200);
+          });
+        } else {
+          res.sendStatus(404);
+        }
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  }
+});
 // update a course - begin
 
 // create a lesson - begin
 app.post("/lesson", auth, (req, res) => {
+  var { title, link, description, CourseId } = req.body;
 
-    var {
-        title,
-        link,
-        description,
-        CourseId
-    } = req.body
-
-    if ((title != undefined) && (link != undefined) && (description != undefined) && (courseId != undefined)) {
-        Lesson.create({
-            title: title,
-            link: link,
-            description: description,
-            CourseId:CourseId
-        }).then(() => {
-            res.sendStatus(200)
-        })
-    } else {
-        res.sendStatus(400)
-    }
-})
+  if (
+    title != undefined &&
+    link != undefined &&
+    description != undefined &&
+    courseId != undefined
+  ) {
+    Lesson.create({
+      title: title,
+      link: link,
+      description: description,
+      CourseId: CourseId,
+    }).then(() => {
+      res.sendStatus(200);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
 // create a lesson - end
 
 // delete a lesson - begin
 app.delete("/lesson/:id", auth, async (req, res) => {
-    if (isNaN(req.params.id)) {
-        res.sendStatus(400)
-    } else {
-        var id = parseInt(req.params.id)
+  if (isNaN(req.params.id)) {
+    res.sendStatus(400);
+  } else {
+    var id = parseInt(req.params.id);
 
-        await Lesson.findOne({
-            raw: true,
-            where: {
-                id: id
-            }
-        }).then(async result => {
-            if (result != undefined) {
-                await Lesson.destroy({
-                    where: {
-                        id: id
-                    }
-                }).then(() => {
-                    res.sendStatus(200)
-                })
-            } else {
-                res.sendStatus(404)
-            }
-        })
-    }
-})
+    await Lesson.findOne({
+      raw: true,
+      where: {
+        id: id,
+      },
+    }).then(async (result) => {
+      if (result != undefined) {
+        await Lesson.destroy({
+          where: {
+            id: id,
+          },
+        }).then(() => {
+          res.sendStatus(200);
+        });
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  }
+});
 // delete a lesson - begin
 
 // update a lesson - begin
 app.put("/lesson/:id", auth, async (req, res) => {
+  if (isNaN(req.params.id)) {
+    res.sendStatus(400);
+  } else {
+    var id = parseInt(req.params.id);
 
-    if (isNaN(req.params.id)) {
-        res.sendStatus(400)
-    } else {
-        var id = parseInt(req.params.id)
+    await Lesson.findOne({
+      raw: true,
+      where: {
+        id: id,
+      },
+    }).then(async (result) => {
+      if (result != undefined) {
+        var { title, link, description, CourseId } = req.body;
 
-        await Lesson.findOne({
-            raw: true,
-            where: {
-                id: id
-            }
-        }).then(async result => {
-            if (result != undefined) {
-                var {
-                    title,
-                    link,
-                    description,
-                    CourseId
-                } = req.body
-
-                if ((title != undefined) && (link != undefined) && (description != undefined)&& (CourseId != undefined)) {
-                    // title year price
-                    await games.update({
-                        title: title,
-                        link: link,
-                        description: description
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    }).then(() => {
-                        res.sendStatus(200)
-                    })
-                } else {
-                    res.sendStatus(404)
-                }
-            } else {
-                res.sendStatus(404)
-            }
-        })
-    }
-})
+        if (
+          title != undefined &&
+          link != undefined &&
+          description != undefined &&
+          CourseId != undefined
+        ) {
+          // title year price
+          await games
+            .update(
+              {
+                title: title,
+                link: link,
+                description: description,
+              },
+              {
+                where: {
+                  id: id,
+                },
+              }
+            )
+            .then(() => {
+              res.sendStatus(200);
+            });
+        } else {
+          res.sendStatus(404);
+        }
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  }
+});
 // update a lesson - begin
 /*
 // route to authentication - begin
@@ -401,5 +412,5 @@ app.post("/signup", (req, res) => {
 // route to signup - end
 */
 app.listen(process.env.PORT || 45789, () => {
-    console.log("API RODANDO")
-})
+  console.log("API RODANDO");
+});
