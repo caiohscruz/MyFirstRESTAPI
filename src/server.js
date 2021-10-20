@@ -59,6 +59,24 @@ app.get("/courses", async (req, res) => {
 })
 // list all courses - end
 
+// list a specific courses - begin
+app.get("/course/:id", async (req, res) => {
+    await Course.findOne({
+        raw: true,
+        where:{
+            id: id
+        }
+    }).then(result => {
+        if (result != undefined) {
+            res.statusCode = 200
+            res.json(result)
+        } else {
+            res.sendStatus(404)
+        }
+    })
+})
+// list a specific course - end
+
 // list all lessons from a specific course - begin
 app.get("/lessons/:id", async (req, res) => {
     if (isNaN(req.params.id)) {
